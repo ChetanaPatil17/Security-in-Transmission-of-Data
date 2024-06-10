@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Metadata_Main</title>
+</head>
+
+<body>
+
+    <style>
+        body{
+            background-image: url('bg_01.jpeg');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
+
+    <b><i>Upload a local file to read Exif data.</i></b>
+    <br />
+    <br />
+    <input id="file-input" type="file" />
+    <br /><br />
+
+    Click the images to read Exif data. The first image tests reading single tags,
+    while the other two simply show all available data. Check this <a href="example">example</a>
+    if you prefer not to click but see EXIF info immediately.
+
+    <br /><br />
+    <b> Note :These examples will not work if running from a local file.</b>
+    <br /><br />
+    <img src="example/DSCN0614_small.jpg" id="img1" />
+    <br />
+    <img src="example/Bush-dog.jpg" id="img2" />
+    <br />
+    <img src="example/dsc_09827.jpg" id="img3" /><br />
+    <br />
+    <button id="objecturltest">Object URL Test</button><br />
+    <br />
+    <button id="blobtest">Blob Test</button><br />
+    <br />
+    <button id="base64test">Base64 Test</button><br />
+
+    <script type="text/javascript" src="exif.js"></script>
+    <script>
+        document.getElementById("img1").onclick = function () {
+            EXIF.getData(this, function () {
+                var make = EXIF.getTag(this, "Make"),
+                    model = EXIF.getTag(this, "Model");
+                alert("I was taken by a " + make + " " + model);
+            });
+        }
+
+        document.getElementById("img2").onclick = function () {
+            EXIF.getData(this, function () {
+                alert(EXIF.pretty(this));
+            });
+        }
+
+        document.getElementById("img3").onclick = function () {
+            EXIF.getData(this, function () {
+                alert(EXIF.pretty(this));
+            });
+        }
+
+        document.getElementById("file-input").onchange = function (e) {
+            var file = e.target.files[0]
+            if (file && file.name) {
+                EXIF.getData(file, function () {
+                    var exifData = EXIF.pretty(this);
+                    if (exifData) {
+                        alert(exifData);
+                    } else {
+                        alert("No EXIF data found in image '" + file.name + "'.");
+                    }
+                });
+            }
+        }
+
+        document.getElementById("base64test").onclick = function () {
+            var image = new Image();
+            image.onload = function () {
+                EXIF.getData(image, function () {
+                    alert(EXIF.pretty(this));
+                });
+            };
+
+        }
+
+        var testFilePath = "example/DSCN0614_small.jpg";
+
+        document.getElementById("objecturltest").onclick = function () {
+            var http = new XMLHttpRequest();
+            http.open("GET", testFilePath, true);
+            http.responseType = "blob";
+            http.onload = function (e) {
+                if (this.status === 200) {
+                    var image = new Image();
+                    image.onload = function () {
+                        EXIF.getData(image, function () {
+                            alert(EXIF.pretty(this));
+                        });
+                    };
+                    image.src = URL.createObjectURL(http.response);
+
+                }
+            };
+            http.send();
+        }
+
+        document.getElementById("blobtest").onclick = function () {
+            var http = new XMLHttpRequest();
+            http.open("GET", testFilePath, true);
+            http.responseType = "blob";
+            http.onload = function (e) {
+                if (this.status === 200) {
+                    EXIF.getData(http.response, function () {
+                        alert(EXIF.pretty(this));
+                    });
+                }
+            };
+            http.send();
+        }
+    </script>
+</body>
+
+</html>

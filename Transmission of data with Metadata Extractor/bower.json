@@ -1,0 +1,23 @@
+{
+  "name": "exif-js",
+  "version": "2.3.0",
+  "homepage": "Not yet mentioned",
+  "authors": [
+    "Gaurav Deore"
+  ],
+  "description": "Readong the Metadata of a Picture",
+  "main": "exif.js",
+  "keywords": [
+    "exif"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "spec",
+    "example"
+  ]
+}
